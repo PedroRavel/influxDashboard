@@ -1,0 +1,20 @@
+{
+  "name": "dashboard",
+  "version": "1.0.0",
+  "description": "Kpi Dashboard API",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pedro Ravel Pedro.Ravel@Capitalone.com",
+  "license": "ISC",
+  "dependencies": {
+    "angular-chart.js": "^1.0.0",
+    "body-parser": "^1.15.1",
+    "express": "^4.14.0",
+    "got": "^6.3.0",
+    "influx": "^4.2.0",
+    "mongoose": "^4.5.2",
+    "splunk-sdk": "^1.8.0"
+  }
+}

@@ -1,0 +1,101 @@
+
+<div class="container-fluid container-fluid-spacious">
+  <div ng-repeat='metrics in kpiData track by $index'>
+ 
+    <div ng-repeat = "mets in metrics track by $index">
+<!--     <div class ="col-lg-4">
+          <div class="row">
+            <div class="col-lg-12 col-lg-12 m-b" >
+              <div class="statcard">
+                <div class="p-a">
+                  <h2 class="statcard-number">{{met.kpi}}
+                  <span class = "btn warning-label-low">{{$index + 1}}</span>
+
+                  </h2>
+                </div>
+                <div id="container" ng-init= "values = []; dates = []">
+                  <div ng-if="isLine">
+                  <canvas width="600" height="300" class="chart chart-line" chart-data="mets.values" chart-options="options" chart-labels="mets.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+                </div>
+                <div ng-if="!isLine">
+                  <canvas width="600" height="300" class="chart chart-bar" chart-data="mets.values" chart-options="options" chart-labels="mets.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+        <div class ="col-lg-4" ng-if="$index < 3">
+          <div class="row">
+            <div class="col-lg-12 col-lg-12 m-b" >
+              <div class="statcard">
+                  <div class="p-a">
+                    <div>
+                      <h2 class="statcard-number">{{mets.kpi}}</h2>
+                      </div>
+                  
+                      </div>
+                <div id="container">
+                  
+                  <canvas width="600" height="300"  class="chart chart-base" chart-type="mets.graphType" chart-data="mets.values" chart-options="options" chart-labels="mets.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+                
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class ="col-lg-4" ng-if="$index >= 3 && $index < 6">
+          <div class="row">
+            <div class="col-lg-12 col-lg-12 m-b" >
+              <div class="statcard">
+                  <div class="p-a">
+                    <div>
+                      <h2 class="statcard-number">{{mets.kpi}}</h2>
+                      </div>
+                  
+                      </div>
+                <div id="container">
+                  
+                  <!-- <canvas width="600" height="300"  class="chart chart-base" chart-type="barOrLine()" chart-data="mets.values" chart-options="options" chart-labels="mets.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas> -->
+                  
+                <div ng-if="mets.number.length">
+                  <h1 class="label label-success" ng-style="{'background-color': changeNumberColor(mets.number[mets.number.length - 1],mets.min,mets.max)}">{{mets.preStat}} {{mets.number[mets.number.length-1]}} {{mets.postStat}}</h1>
+                  
+                </div>
+                <div ng-if="mets.statOrPie === 'pie'">
+
+                  <canvas class="chart chart-pie" chart-data="[mets.number[mets.number.length-1]]" chart-labels="[mets.kpi]" chart-options="options"></canvas> 
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+
+        <div class="col-lg-12" ng-if="$index >= 6">
+          <div class="row">
+            <div class="col-lg-12 col-lg-12 m-b" >
+              <div class="statcard">
+                <div class="p-a">
+                  <h2 class="statcard-number">{{mets.kpi}}
+                  </h2>
+                </div>
+                <div id="container">
+                  
+                  <canvas width="600" height="100"  class="chart chart-base" chart-type="mets.graphType" chart-data="mets.values" chart-options="options" chart-labels="mets.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+                
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+    </div>
+  </div>
+</div>

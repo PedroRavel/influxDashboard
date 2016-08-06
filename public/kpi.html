@@ -1,0 +1,22 @@
+<div class="row statcard">
+  <div class="col-sm-12 col-md-12 m-b">
+    <div class="statcard">
+      <div class="p-a">
+        <h2 class="statcard-number">{{kpi.kpi}}
+
+        </h2>
+      </div>
+      <div id="container" ng-init = "value = []; dates = []">
+        <canvas width="573" height="200" class="chart chart-line" chart-data="[kpi.values]" chart-options="options" chart-labels="kpi.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;">
+        </canvas>
+      </div>
+    </div>
+  </div>
+  <div class = "row" style="display:relative; margin-left: 1em; margin-right: .5em">
+    <div class="col-sm-12 col-md-12 m-b">
+      <div class="label label-success" ng-style="{'background-color': changeNumberColor(kpiData.number[kpiData.number.length - 1],kpiData.minForNumber,kpiData.maxForNumber)}">
+        {{kpiData.number[kpiData.number.length - 1]}}
+      </div>
+    </div>
+  </div>
+</div>

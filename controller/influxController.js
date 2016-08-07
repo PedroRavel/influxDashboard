@@ -14,6 +14,7 @@ const indexForValuesInQueryArray = 6;
 const beginningIndexForTime = 11;
 const endingIndexForTime = 19;
 const notAvailable = "-1";
+const amountOfMetrics = 9;
 
 var client = influx({
   host : 'influx-qa-read.kdc.capitalone.com',
@@ -28,7 +29,7 @@ var indexOfList = 0;
 //    host : 'localhost',
 //    username : '',
 //    password : '',
-//    database : 'Kpi_Metrics'
+//    database : 'metric_Metrics'
     
 // })
 //stucture to store influx data and pass to front end in format it can interprit 
@@ -40,8 +41,8 @@ var indexOfList = 0;
 //select max(licUsdMB) from EntLicInfo where title != 'All Pools' and time > now() - 476h group by time(24h), title
 // select max(licUsdMB), max(licQtGB) * 1024 as LicAllocated from EntLicInfo where title =~ /All*/ and time > now() - 476h group by time(24h), title
 
-function KPI(){
-  this.kpi;
+function Metric(){
+  this.metric;
   this.date = [];
   this.values = [];
   this.number = [];
@@ -52,43 +53,40 @@ function KPI(){
   this.min;
   this.max;
   this.query;
-
-  //this.data = [];
-  //this.criticalValues = [];
 };
 
 // client.getMeasurements(function(err,arrayMeasurements){ 
 //   console.log(JSON.stringify(arrayMeasurements))
 // } )
   
-exports.addToKpi = function(req,res){
-  var kpiList = []
-  for(var i = 0; i < 9; i++){
-    kpiList.push(new KPI())
+exports.appendMetricToList = function(req,res){
+  var metricList = []
+  
+  for(var i = 0; i < amountOfMetrics; i++){
+    metricList.push(new Metric())
   }
-  list[indexOfList] = kpiList;
+  
+  list[indexOfList] = metricList;
   indexOfList++;
-
   res.json(list);
 }
 
-exports.getName = function(req,res){
-  list[req.body.listIndex][req.body.metricIndex].kpi = req.body.name;
+exports.setName = function(req,res){
+  list[req.body.listIndex][req.body.metricIndex].metric = req.body.name;
   res.json(list); 
 }
 
-exports.getPreName = function(req,res){
+exports.setPreName = function(req,res){
   list[req.body.listIndex][req.body.metricIndex].preStat = req.body.preName;
   res.json(list); 
 }
 
-exports.getPostName = function(req,res){
+exports.setPostName = function(req,res){
   list[req.body.listIndex][req.body.metricIndex].postStat = req.body.postName;
   res.json(list); 
 }
 
-exports.getGraph = function(req,res){
-  console.log(req.body.graphType)
+exports.setGraph = function(req,res){
   list[req.body.listIndex][req.body.metricIndex].graphType = req.body.graphType;
   res.json(list); 
 }
@@ -104,11 +102,10 @@ exports.setMax = function(req,res){
 }
 
 exports.getMetric = function(req,res){
-  
   res.json(list[req.params.index])
 }
 
-exports.getList = function(req,res){
+exports.getMetricList = function(req,res){
   res.json(list);
 }
 
@@ -119,13 +116,12 @@ exports.processMetrics = function(req,res){
     if(err){
       res.send({error:"error"});
     }else {
-      var kpi = new KPI();
-      kpi.query = req.body.query;
-      console.log(req.body)
+      var metric = new Metric();
+      metric.query = req.body.query;
       if(req.body.typeOfMetric === "stat"){
         for(var i = 0; i < measurements[0].series[0].values.length; i ++){
-          kpi.date.push(measurements[0].series[0].values[i][0])
-          kpi.number.push(measurements[0].series[0].values[i][1])
+          metric.date.push(measurements[0].series[0].values[i][0])
+          metric.number.push(measurements[0].series[0].values[i][1])
         }
       }
       else{ 
@@ -134,56 +130,38 @@ exports.processMetrics = function(req,res){
         var j = 0;
         var i = 0;
         for(i = 0; i < measurements[0].series[0].values[0].length; i ++){
-          kpi.values[i] = []
+          metric.values[i] = []
           for(j = 0 ; j < measurements[0].series[0].values.length; j++){
             if(i === 0){
-              kpi.date.push(measurements[0].series[0].values[j][0])
+              metric.date.push(measurements[0].series[0].values[j][0])
             }else{
-              kpi.values[i - 1].push(measurements[0].series[0].values[j][i])
+              metric.values[i - 1].push(measurements[0].series[0].values[j][i])
             }
           }
         }
-        kpi.values.pop();
+        metric.values.pop();
       } else{
         var j = 0;
         var i = 0;
         for(var k = 0; k < measurements[0].series.length;k++){
-          kpi.values[k] = []
+          metric.values[k] = []
           for(i = 0; i < measurements[0].series[k].values[0].length; i ++){
             for(j = 0 ; j < measurements[0].series[k].values.length; j++){
               if(i === 0){
                 if(k === 0)
-                  kpi.date.push(measurements[0].series[k].values[j][0])
+                  metric.date.push(measurements[0].series[k].values[j][0])
               }else{
-                kpi.values[k].push(measurements[0].series[k].values[j][i])
+                metric.values[k].push(measurements[0].series[k].values[j][i])
               }
             }
           }
         }
       }
-}
-    // console.log(list)
-      list[req.body.listIndex][req.body.metricIndex] = kpi
-      res.json(list);
+    }
+    list[req.body.listIndex][req.body.metricIndex] = metric
+    res.json(list);
     
     }
   })
 }
-
-exports.addMetrics = function(req,res){
-  
-  res.json({message:"Not available"})
- 
-};
-
-//gets query from influx database and parses through array and objects and sets fields for KPI objects
-exports.getMetrics = function(req,res){
-
-  res.json({message: "NO DATA"})
-};
-
-//gets individual metric, parses through the values and sets fields in kpi 
-exports.getOneMetric = function(req,res){
-  res.json({message: "NO DATA"})
-};
 

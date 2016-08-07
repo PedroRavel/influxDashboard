@@ -92,26 +92,28 @@ app.controller('kpi', function($scope,$http,$routeParams){
 app.controller('ctrl', function($scope,$http,$timeout){
   
   $scope.graphList = ['line','bar','radar','horizontalBar'];
+
+  $scope.metricList = []
+
+  $http.get('/metric/list').then(function(res){
+    $scope.metricList = res.data;
+  })
+
   $scope.switchGraph = function(graph,listIndex,metricIndex) {
     var data = {
       graphType:graph,
       listIndex:listIndex,
       metricIndex:metricIndex
     }
-    $http.post('/changegraph',data).then(function(res){
+    $http.post('/metric/setgraph',data).then(function(res){
 
     });
   }
 
-  $scope.kpiData = []
-
-  $http.get('/list').then(function(res){
-    $scope.kpiData = res.data;
-  })
-
-  $scope.putin = function(){    
-    $http.get('/add').then(function(res){
-      $scope.kpiData = res.data
+  
+  $scope.createList = function(){    
+      $http.get('/metric/add').then(function(res){
+      $scope.metricList = res.data
     })
   }
 
@@ -121,7 +123,7 @@ app.controller('ctrl', function($scope,$http,$timeout){
       listIndex:listIndex,
       metricIndex:metricIndex
     }
-    $http.post('/setmin',data).then(function(res){
+    $http.post('/metric/setmin',data).then(function(res){
 
     });
   }
@@ -132,41 +134,41 @@ app.controller('ctrl', function($scope,$http,$timeout){
       listIndex:listIndex,
       metricIndex:metricIndex
     }
-    $http.post('/setmax',data).then(function(res){
+    $http.post('/metric/setmax',data).then(function(res){
 
     });
   }
   
-  $scope.changeName = function(name, listIndex,metricIndex){
+  $scope.setName = function(name, listIndex,metricIndex){
     var data =  {
         name:name,
         listIndex:listIndex,
         metricIndex:metricIndex
     }
-    $http.post('/changename',data).then(function(res){
+    $http.post('/metric/setname',data).then(function(res){
 
     });
   }
 
-  $scope.changePreName = function(preName, listIndex,metricIndex){
+  $scope.setPreName = function(preName, listIndex,metricIndex){
     var data =  {
         preName:preName,
         listIndex:listIndex,
         metricIndex:metricIndex
     }
-    $http.post('/changeprename',data).then(function(res){});
+    $http.post('/metric/setprename',data).then(function(res){});
   }
 
-  $scope.changePostName = function(postName, listIndex,metricIndex){
+  $scope.setPostName = function(postName, listIndex,metricIndex){
     var data =  {
         postName:postName,
         listIndex:listIndex,
         metricIndex:metricIndex
     }
-    $http.post('/changepostname',data).then(function(res){});
+    $http.post('/metric/setpostname',data).then(function(res){});
   }
 
-  $scope.click = function(query, listIndex, metricIndex, typeOfMetric){
+  $scope.queryDB = function(query, listIndex, metricIndex, typeOfMetric){
     var data = { 
         query:query,
         listIndex:listIndex,
@@ -174,21 +176,12 @@ app.controller('ctrl', function($scope,$http,$timeout){
         typeOfMetric:typeOfMetric
       }
     
-    $http.post('/test',data).then(function(res){
+    $http.post('/metric/process',data).then(function(res){
       if(res.data.error){
         alert("Incorrect query syntax. Please check spelling");
       } else {
-      $scope.kpiData = res.data;
+      $scope.metricList = res.data;
     }
     })
   }
-
-
 })
-
-
-
-
-        
-
-	

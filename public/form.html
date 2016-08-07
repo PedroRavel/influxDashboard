@@ -1,12 +1,12 @@
 <body>
-	<div ng-click="putin()" class = "btn btn-success" style="position:relative;margin:auto">
+	<div ng-click="createList()" class = "btn btn-success" style="position:relative;margin:auto">
   Add
   </div>
-  <div ng-repeat="kpi in kpiData track by $index">
+  <div ng-repeat="metric in metricList track by $index">
     <h1 class = "btn btn-primary">Metric set {{$index + 1}}</h1>
     <div ng-init ="indexOfList = $index">
       <div class = "container-fluid container-fluid-spacious">
-        <div ng-repeat="data in kpi track by $index">
+        <div ng-repeat="data in metric track by $index">
           <div class="col-lg-4">
             <div ng-if="$index < 3">
 
@@ -15,9 +15,9 @@
 
               <div class = "row">
                 <div class="col-lg-6" style="margin-left:5px; width:50%">
-                  <form ng-submit="changeName(data.kpi,indexOfList,$index)" class="form-inline navbar-form">
+                  <form ng-submit="setName(data.metric,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
-                      <input class="form-control"  ng-model="data.kpi" type="text" placeholder="name" style="width:150%" >
+                      <input class="form-control"  ng-model="data.metric" type="text" placeholder="name" style="width:150%" >
                         <span class="icon icon-magnifying-glass"></span>
                     </div>
                   </form>
@@ -31,7 +31,7 @@
                 </div>
  
               </div>
-		          <form ng-submit="click(data.query,indexOfList,$index,'graph')" class="form-inline navbar-form">
+		          <form ng-submit="queryDB(data.query,indexOfList,$index,'graph')" class="form-inline navbar-form">
                 <div class="input-with-icon">
                   <input class="form-control" style='width:275%' ng-model="data.query" type="text" placeholder="query">
                   <span class="icon icon-magnifying-glass"></span>
@@ -44,15 +44,15 @@
               
               <div class = "row">
                 <div class="col-sm-4" style="margin-left:5px; width:30%">
-                  <form ng-submit="changeName(data.kpi,indexOfList,$index)" class="form-inline navbar-form">
+                  <form ng-submit="setName(data.metric,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
-                      <input class="form-control" style='width:150%' ng-model="data.kpi" type="text" placeholder="name">
+                      <input class="form-control" style='width:150%' ng-model="data.metric" type="text" placeholder="name">
                       <span class="icon icon-magnifying-glass"></span>
                     </div>
                   </form>
                 </div>
                 <div class="col-sm-4" style="margin-left:12px; width:30%">
-                  <form ng-submit="changePreName(data.preStat,indexOfList,$index,'graph')" class="form-inline navbar-form">
+                  <form ng-submit="setPreName(data.preStat,indexOfList,$index,'graph')" class="form-inline navbar-form">
                     <div class="input-with-icon">
                       <input class="form-control" style='width:150%' ng-model="data.preStat" type="text" placeholder="prename">
                       <span class="icon icon-magnifying-glass"></span>
@@ -60,7 +60,7 @@
                   </form>
                 </div>
                 <div class="col-sm-4" style="margin-left:12px; width:30%">
-                  <form ng-submit="changePostName(data.postStat,indexOfList,$index)" class="form-inline navbar-form">
+                  <form ng-submit="setPostName(data.postStat,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
                       <input class="form-control" style='width:150%' ng-model="data.postStat" type="text" placeholder="postname">
                       <span class="icon icon-magnifying-glass"></span>
@@ -94,7 +94,7 @@
                   </div>
                 </div>
               </div>
-              <form ng-submit="click(data.query,indexOfList,$index,'stat')" class="form-inline navbar-form">
+              <form ng-submit="queryDB(data.query,indexOfList,$index,'stat')" class="form-inline navbar-form">
                 <div class="input-with-icon">
                   <input class="form-control" style='width:275%' ng-model="data.query" type="text" placeholder="query">
                   <span class="icon icon-magnifying-glass"></span>
@@ -108,9 +108,9 @@
             
               <div class = "row">
                 <div class="col-lg-6" style="margin-left:5px; width:50%">
-                  <form ng-submit="changeName(data.kpi,indexOfList,$index)" class="form-inline navbar-form">
+                  <form ng-submit="setName(data.metric,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
-                      <input class="form-control"  ng-model="data.kpi" type="text" placeholder="name" style="width:150%" >
+                      <input class="form-control"  ng-model="data.metric" type="text" placeholder="name" style="width:150%" >
                         <span class="icon icon-magnifying-glass"></span>
                     </div>
                   </form>
@@ -124,7 +124,7 @@
                 </div>
  
               </div>
-              <form ng-submit="click(data.query,indexOfList,$index)" class="form-inline navbar-form">
+              <form ng-submit="queryDB(data.query,indexOfList,$index)" class="form-inline navbar-form">
                 <div class="input-with-icon">
                   <input class="form-control" style='width:275%' ng-model="data.query" type="text" placeholder="query">
                     <span class="icon icon-magnifying-glass"></span>

@@ -43,7 +43,7 @@ function Metric(){
   this.metric;
   this.date = [];
   this.values = [];
-  this.number = [];
+  this.title = [];
   this.statNumber;
   this.graphType = "line";
   this.statOrPie = "stat";
@@ -58,19 +58,19 @@ function Metric(){
 function setStat(choice,listIndex,metricIndex){
     switch(choice) {
       case "latest":
-        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].number[list[listIndex][metricIndex].number.length - 1];
+        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].values[list[listIndex][metricIndex].values.length - 1];
         break;
       case "max":
-        list[listIndex][metricIndex].statNumber = Math.max(...list[listIndex][metricIndex].number);
+        list[listIndex][metricIndex].statNumber = Math.max(...list[listIndex][metricIndex].values);
         break;
       case "min":
-        list[listIndex][metricIndex].statNumber = Math.min(...list[listIndex][metricIndex].number);
+        list[listIndex][metricIndex].statNumber = Math.min(...list[listIndex][metricIndex].values);
         break;
       case "sum":
-        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].number.reduce(function(a, b) {return a + b;}, 0);
+        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].values.reduce(function(a, b) {return a + b;}, 0);
         break;
       case "average":
-        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].number.reduce(function(a, b) {return a + b;}, 0)/list[listIndex][metricIndex].number.length;
+        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].values.reduce(function(a, b) {return a + b;}, 0)/list[listIndex][metricIndex].values.length;
         break;
 
     }
@@ -91,6 +91,11 @@ exports.appendMetricToList = function(req,res){
   list[indexOfList] = metricList;
   indexOfList++;
   res.json(list);
+}
+
+exports.setStatVisual = function(req,res){
+  list[req.body.listIndex][req.body.metricIndex].statOrPie = req.body.visual;
+  res.json(list)
 }
 
 exports.setStatNumber = function(req,res){
@@ -139,7 +144,9 @@ exports.getMetricList = function(req,res){
 exports.processMetrics = function(req,res){
 
  client.queryRaw(req.body.query, function(err, measurements){
+    console.log("===============================================================================")
     console.log(JSON.stringify(measurements));
+    console.log("===============================================================================")
     if(err){
       res.send({error:"error"});
     }else {
@@ -148,15 +155,19 @@ exports.processMetrics = function(req,res){
       if(req.body.typeOfMetric === "stat"){
         for(var i = 0; i < measurements[0].series[0].values.length; i ++){
           metric.date.push(measurements[0].series[0].values[i][0])
-          metric.number.push(measurements[0].series[0].values[i][1])
+          metric.values.push(measurements[0].series[0].values[i][1])
+          if(measurements[0].series[0].tags.title){
+            metric.title.push(measurements[0].series[0].tags.title)
+          }
         }
-        metric.statNumber = metric.number[metric.number.length - 1];
+        metric.statNumber = metric.values[metric.values.length - 1];
       }
       else{ 
 
         if(measurements[0].series.length === 1){
         var j = 0;
         var i = 0;
+
         for(i = 0; i < measurements[0].series[0].values[0].length; i ++){
           metric.values[i] = []
           for(j = 0 ; j < measurements[0].series[0].values.length; j++){
@@ -167,12 +178,18 @@ exports.processMetrics = function(req,res){
             }
           }
         }
+        for(var k = 1; k < measurements[0].series[0].columns.length; k++){
+          metric.title.push(measurements[0].series[0].columns[k]);
+        }
         metric.values.pop();
       } else{
         var j = 0;
         var i = 0;
         for(var k = 0; k < measurements[0].series.length;k++){
           metric.values[k] = []
+          if(measurements[0].series[k].tags.title){
+            metric.title.push(measurements[0].series[k].tags.title)
+          }
           for(i = 0; i < measurements[0].series[k].values[0].length; i ++){
             for(j = 0 ; j < measurements[0].series[k].values.length; j++){
               if(i === 0){

@@ -29,6 +29,10 @@ app.post('/metric/setstat',function(req,res){
   metrics.setStatNumber(req,res);
 })
 
+app.post('/metric/setstatvisual',function(req,res){
+  metrics.setStatVisual(req,res);
+})
+
 app.post('/metric/process', function(req,res){
   metrics.processMetrics(req,res);
 })

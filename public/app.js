@@ -34,6 +34,38 @@ var app = angular.module('myApp',['ngRoute','chart.js'])
       }
     };
 
+    $rootScope.pieOptions = {
+
+      animation: {
+        duration: 0.0
+      },
+      elements: {
+        line: {
+          borderWidth: 0.5
+        },
+        point: {
+          radius: 2
+        }
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          display: false
+        }],
+        yAxes: [{
+          display: false
+        }],
+        gridLines: {
+          display: false
+        }
+      },
+      tooltips: {
+        enabled: true
+      }
+    };
+
     $rootScope.statOptions = {
 
       animation: {
@@ -157,12 +189,27 @@ app.controller('ctrl', function($scope,$http,$timeout){
   
   $scope.graphList = ['line','bar','radar','horizontalBar'];
   $scope.statType = ['max','min','average','sum','latest']
+  $scope.statVisual = ['stat','pie','doughnut']
 
   $scope.metricList = []
 
   $http.get('/metric/list').then(function(res){
     $scope.metricList = res.data;
   })
+
+  $scope.setVisual = function(visual,listIndex,metricIndex){
+    var data = {
+      visual:visual,
+      listIndex:listIndex,
+      metricIndex:metricIndex
+
+    }
+    
+    $http.post('/metric/setstatvisual',data).then(function(res){
+      $scope.metricList = res.data;
+    })    
+
+  }
 
 
 

@@ -25,19 +25,7 @@ var client = influx({
 var list = []
 var indexOfList = 0;
 
-// var client = influx({
-//    host : 'localhost',
-//    username : '',
-//    password : '',
-//    database : 'metric_Metrics'
-    
-// })
 //stucture to store influx data and pass to front end in format it can interprit 
-//SINGLE STAT!!!
-//select max(licQtGB) * 1024 as LicAllocated from EntLicInfo where title = 'All Pools' and time > now() - 476h group by time(24h), title 
-//select licUsdMB from EntLicInfo WHERE time > now() - 50m
-//select max(licUsdMB) from EntLicInfo where title != 'All Pools' and time > now() - 476h group by time(24h), title
-//select max(licUsdMB), max(licQtGB) * 1024 as LicAllocated from EntLicInfo where title =~ /All*/ and time > now() - 476h group by time(24h), title
 
 function Metric(){
   this.metric;
@@ -75,21 +63,13 @@ function setStat(choice,listIndex,metricIndex){
 
     }
 }
-
-
-// client.getMeasurements(function(err,arrayMeasurements){ 
-//   console.log(JSON.stringify(arrayMeasurements))
-// } )
   
 exports.appendMetricToList = function(req,res){
   var metricList = []
-  
   for(var i = 0; i < amountOfMetrics; i++){
     metricList.push(new Metric())
   }
-  
-  list[indexOfList] = metricList;
-  indexOfList++;
+  list[indexOfList++] = metricList;
   res.json(list);
 }
 
@@ -134,7 +114,7 @@ exports.setMax = function(req,res){
 }
 
 exports.getMetric = function(req,res){
-  res.json(list[req.params.index])
+  res.json(list[req.body.listIndex][req.body.metricIndex])
 }
 
 exports.getMetricList = function(req,res){

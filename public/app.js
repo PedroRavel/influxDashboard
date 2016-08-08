@@ -165,11 +165,6 @@ app.config(['$routeProvider','$locationProvider',function($routeProvider,$locati
         templateUrl: "dashboard.html",
         controller:"ctrl"
       })
-    .when('/stacked',
-      {
-        templateUrl:"stackedDashboard.html",
-        controller: "ctrl"
-      })
     .when('/metric/find/:index',
     {
       templateUrl:"kpi.html",

@@ -88,8 +88,8 @@
                 </div>
                 <div class="col-sm-4" style="margin-left:12px; width:30%">
                   <div class ="form-inline navbar-form">
-                    <select class="form-control" style="width:150%" ng-model="graph" ng-change="switchGraph(graph,indexOfList,$index)">
-                      <option ng-repeat="type in graphList" value="{{type}}">{{type}}</option>
+                    <select class="form-control" style="width:150%" ng-model="choice" ng-change="setStat(choice,indexOfList,$index)">
+                      <option ng-repeat="type in statType" value="{{type}}">{{type}}</option>
                     </select>
                   </div>
                 </div>

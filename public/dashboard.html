@@ -13,9 +13,15 @@
                       </div>
                   
                       </div>
-                <div id="container">
+                  <div id="container">
+                  <div ng-if="data.values.length">
+                  <canvas width="600" height="350"  class="chart chart-base" chart-type="data.graphType" chart-data="data.values" chart-options="options" chart-labels="data.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+                  </div>
+                  <div ng-if="!data.values.length">
+                  <canvas width="600" height="350"  class="chart chart-line" chart-data="[[1,37,66,97,112],[6,7,8,9,10]]" chart-options="dummyOptions" chart-labels="['No Data']" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+                  </div>
                   
-                  <canvas width="600" height="300"  class="chart chart-base" chart-type="data.graphType" chart-data="data.values" chart-options="options" chart-labels="data.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+
                 
 
                 </div>
@@ -39,7 +45,9 @@
                   <!-- <canvas width="600" height="300"  class="chart chart-base" chart-type="barOrLine()" chart-data="data.values" chart-options="options" chart-labels="data.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas> -->
                   
                 <div ng-if="data.number.length">
-                  <h1 class="label label-success" ng-style="{'background-color': changeNumberColor(data.number[data.number.length - 1],data.min,data.max)}">{{data.preStat}} {{data.number[data.number.length-1]}} {{data.postStat}}</h1>
+                  <h1 class="label label-success" ng-style="{'background-color': changeNumberColor(data.statNumber,data.min,data.max)}">{{data.preStat}} {{data.statNumber}} {{data.postStat}}</h1>
+
+                  <canvas width="100" height="20"   class="chart chart-line" chart-data="[data.number]" chart-options="statOptions" chart-labels="data.date" chart-dataset-override = "dataSetOverride" ></canvas>
                   
                 </div>
                 <div ng-if="data.statOrPie === 'pie'">
@@ -63,7 +71,7 @@
                 </div>
                 <div id="container">
                   
-                  <canvas width="600" height="100"  class="chart chart-base" chart-type="data.graphType" chart-data="data.values" chart-options="options" chart-labels="data.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
+                  <canvas width="600" height="75"  class="chart chart-base" chart-type="data.graphType" chart-data="data.values" chart-options="options" chart-labels="data.date" chart-dataset-override = "dataSetOverride" style="display: block; width: 673px; height: 168px;""></canvas>
                 
                 </div>
               </div>

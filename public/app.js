@@ -16,7 +16,7 @@ var app = angular.module('myApp',['ngRoute','chart.js'])
         }
       },
       legend: {
-        display: false
+        display: true
       },
       scales: {
         xAxes: [{
@@ -31,6 +31,70 @@ var app = angular.module('myApp',['ngRoute','chart.js'])
       },
       tooltips: {
         enabled: true
+      }
+    };
+
+    $rootScope.statOptions = {
+
+      animation: {
+        duration: 0.0
+      },
+      elements: {
+        line: {
+          borderWidth: 0
+        },
+        point: {
+          radius: 0
+        }
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          display: false
+        }],
+        yAxes: [{
+          display: false
+        }],
+        gridLines: {
+          display: false
+        }
+      },
+      tooltips: {
+        enabled: false
+      }
+    };
+
+    $rootScope.dummyOptions = {
+
+      animation: {
+        duration: 1
+      },
+      elements: {
+        line: {
+          borderWidth: 0
+        },
+        point: {
+          radius: 0
+        }
+      },
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          display: true
+        }],
+        yAxes: [{
+          display: false
+        }],
+        gridLines: {
+          display: false
+        }
+      },
+      tooltips: {
+        enabled: false
       }
     };
     
@@ -92,12 +156,29 @@ app.controller('kpi', function($scope,$http,$routeParams){
 app.controller('ctrl', function($scope,$http,$timeout){
   
   $scope.graphList = ['line','bar','radar','horizontalBar'];
+  $scope.statType = ['max','min','average','sum','latest']
 
   $scope.metricList = []
 
   $http.get('/metric/list').then(function(res){
     $scope.metricList = res.data;
   })
+
+
+
+  $scope.setStat = function(statChoice, listIndex,metricIndex){
+  
+    var data = {
+      choice:statChoice,
+      listIndex:listIndex,
+      metricIndex:metricIndex
+      
+    }
+
+    $http.post('/metric/setstat',data).then(function(res){
+      $scope.metricList = res.data;
+    })
+  }
 
   $scope.switchGraph = function(graph,listIndex,metricIndex) {
     var data = {

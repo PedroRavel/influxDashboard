@@ -33,19 +33,18 @@ var indexOfList = 0;
     
 // })
 //stucture to store influx data and pass to front end in format it can interprit 
-
-
 //SINGLE STAT!!!
 //select max(licQtGB) * 1024 as LicAllocated from EntLicInfo where title = 'All Pools' and time > now() - 476h group by time(24h), title 
 //select licUsdMB from EntLicInfo WHERE time > now() - 50m
 //select max(licUsdMB) from EntLicInfo where title != 'All Pools' and time > now() - 476h group by time(24h), title
-// select max(licUsdMB), max(licQtGB) * 1024 as LicAllocated from EntLicInfo where title =~ /All*/ and time > now() - 476h group by time(24h), title
+//select max(licUsdMB), max(licQtGB) * 1024 as LicAllocated from EntLicInfo where title =~ /All*/ and time > now() - 476h group by time(24h), title
 
 function Metric(){
   this.metric;
   this.date = [];
   this.values = [];
   this.number = [];
+  this.statNumber;
   this.graphType = "line";
   this.statOrPie = "stat";
   this.preStat;
@@ -54,6 +53,29 @@ function Metric(){
   this.max;
   this.query;
 };
+
+
+function setStat(choice,listIndex,metricIndex){
+    switch(choice) {
+      case "latest":
+        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].number[list[listIndex][metricIndex].number.length - 1];
+        break;
+      case "max":
+        list[listIndex][metricIndex].statNumber = Math.max(...list[listIndex][metricIndex].number);
+        break;
+      case "min":
+        list[listIndex][metricIndex].statNumber = Math.min(...list[listIndex][metricIndex].number);
+        break;
+      case "sum":
+        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].number.reduce(function(a, b) {return a + b;}, 0);
+        break;
+      case "average":
+        list[listIndex][metricIndex].statNumber = list[listIndex][metricIndex].number.reduce(function(a, b) {return a + b;}, 0)/list[listIndex][metricIndex].number.length;
+        break;
+
+    }
+}
+
 
 // client.getMeasurements(function(err,arrayMeasurements){ 
 //   console.log(JSON.stringify(arrayMeasurements))
@@ -68,6 +90,11 @@ exports.appendMetricToList = function(req,res){
   
   list[indexOfList] = metricList;
   indexOfList++;
+  res.json(list);
+}
+
+exports.setStatNumber = function(req,res){
+  setStat(req.body.choice,req.body.listIndex,req.body.metricIndex)
   res.json(list);
 }
 
@@ -123,6 +150,7 @@ exports.processMetrics = function(req,res){
           metric.date.push(measurements[0].series[0].values[i][0])
           metric.number.push(measurements[0].series[0].values[i][1])
         }
+        metric.statNumber = metric.number[metric.number.length - 1];
       }
       else{ 
 

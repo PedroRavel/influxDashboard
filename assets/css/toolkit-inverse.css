@@ -3994,14 +3994,14 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   padding: .3em .5em .3em;
   font-size: 3em;
   font-weight: bold;
-  line-height: 2;
+  line-height: 1.4;
   color: #252830;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: .25em;
   width:100%;
-  height:100px;
+  height:75px;
 }
 a.label:hover,
 a.label:focus {
@@ -7695,7 +7695,7 @@ body {
   padding-bottom: 0 !important;
 }
 .p-a {
-  padding: 20px !important;
+  padding: 5px !important;
 }
 .p-t {
   padding-top: 20px !important;

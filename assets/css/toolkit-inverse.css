@@ -9786,3 +9786,25 @@ fieldset[disabled] .btn-danger-outline.active {
   margin-top: -10px;
   margin-left: 20px;
 }
+.metric-btn{
+  display: inline-block;
+  margin-top:10px;
+
+  color: #2C464C;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+
+}
+
+
+
+
+
+
+
+

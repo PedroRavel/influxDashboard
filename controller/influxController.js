@@ -5,15 +5,8 @@ var influx = require('influx');
 const indexIntoQueryArray = 0;
 const indexIntoSeriesOfQueryArray = 0;
 const indexForDateInQuery = 0;
-const indexForMaxNumberInQueryArray = 1;
-const indexForMaxValueInQueryArray = 2;
-const indexForMinNumberInQueryArray = 3;
-const indexForMinValueInQueryArray = 4;
-const indexForNumberInQueryArray = 5;
-const indexForValuesInQueryArray = 6;
-const beginningIndexForTime = 11;
-const endingIndexForTime = 19;
-const notAvailable = "-1";
+const indexForLengthOfValueArray = 0;
+const indexForValueInQueryArray = 1;
 const amountOfMetrics = 9;
 
 var client = influx({
@@ -22,6 +15,7 @@ var client = influx({
   password : 't1m3r34d',
   database : 'splunk'
 });    
+
 var list = []
 var indexOfList = 0;
 
@@ -124,68 +118,51 @@ exports.getMetricList = function(req,res){
 exports.processMetrics = function(req,res){
 
  client.queryRaw(req.body.query, function(err, measurements){
-    console.log("===============================================================================")
-    console.log(JSON.stringify(measurements));
-    console.log("===============================================================================")
+
     if(err){
       res.send({error:"error"});
-    }else {
+    } else {
       var metric = new Metric();
       metric.query = req.body.query;
       if(req.body.typeOfMetric === "stat"){
-        for(var i = 0; i < measurements[0].series[0].values.length; i ++){
-          metric.date.push(measurements[0].series[0].values[i][0])
-          metric.values.push(measurements[0].series[0].values[i][1])
-          if(measurements[0].series[0].tags.title){
-            metric.title.push(measurements[0].series[0].tags.title)
+        for(var i = 0; i < measurements[indexIntoQueryArray].series[indexIntoSeriesOfQueryArray].values.length; i ++){
+          metric.date.push(measurements[indexIntoQueryArray].series[indexIntoSeriesOfQueryArray].values[i][indexForDateInQuery])
+          metric.values.push(measurements[indexIntoQueryArray].series[indexIntoSeriesOfQueryArray].values[i][indexForValueInQueryArray])
+          if(measurements[indexIntoQueryArray].series[indexIntoSeriesOfQueryArray].tags){
+            metric.title.push(measurements[indexIntoQueryArray].series[indexIntoSeriesOfQueryArray].tags.title)
           }
         }
         metric.statNumber = metric.values[metric.values.length - 1];
       }
-      else{ 
-
-        if(measurements[0].series.length === 1){
-        var j = 0;
-        var i = 0;
-
-        for(i = 0; i < measurements[0].series[0].values[0].length; i ++){
-          metric.values[i] = []
-          for(j = 0 ; j < measurements[0].series[0].values.length; j++){
-            if(i === 0){
-              metric.date.push(measurements[0].series[0].values[j][0])
-            }else{
-              metric.values[i - 1].push(measurements[0].series[0].values[j][i])
-            }
-          }
-        }
-        for(var k = 1; k < measurements[0].series[0].columns.length; k++){
-          metric.title.push(measurements[0].series[0].columns[k]);
-        }
-        metric.values.pop();
-      } else{
-        var j = 0;
-        var i = 0;
-        for(var k = 0; k < measurements[0].series.length;k++){
-          metric.values[k] = []
-          if(measurements[0].series[k].tags.title){
-            metric.title.push(measurements[0].series[k].tags.title)
-          }
-          for(i = 0; i < measurements[0].series[k].values[0].length; i ++){
-            for(j = 0 ; j < measurements[0].series[k].values.length; j++){
-              if(i === 0){
-                if(k === 0)
-                  metric.date.push(measurements[0].series[k].values[j][0])
-              }else{
-                metric.values[k].push(measurements[0].series[k].values[j][i])
+      else { 
+        var indexForValues = 0;
+        for(var i = 0; i < measurements[indexIntoQueryArray].series.length; i++){
+          if(measurements[indexIntoQueryArray].series[i].tags && measurements[indexIntoQueryArray].series[i].columns.length <= 2){
+            metric.title.push(measurements[indexIntoQueryArray].series[i].tags.title)
+          } else {
+              for(var l = 1; l < measurements[indexIntoQueryArray].series[i].columns.length; l++){
+                metric.title.push(measurements[indexIntoQueryArray].series[i].columns[l]);
               }
+          }
+          for(var j = 0; j < measurements[indexIntoQueryArray].series[i].values[indexForLengthOfValueArray].length; j++){
+            metric.values[indexForValues] = [];
+            for(var k = 0; k < measurements[indexIntoQueryArray].series[i].values.length; k++){
+              if(j === 0){
+                if(i === 0){
+                  metric.date.push(measurements[indexIntoQueryArray].series[i].values[k][indexForDateInQuery]);
+                }
+              } else {
+                metric.values[indexForValues].push(measurements[0].series[i].values[k][j]);
+              }              
+            }
+            if(j != 0){
+              indexForValues++;
             }
           }
         }
       }
-    }
-    list[req.body.listIndex][req.body.metricIndex] = metric
-    res.json(list);
-    
+      list[req.body.listIndex][req.body.metricIndex] = metric
+      res.json(list);
     }
   })
 }

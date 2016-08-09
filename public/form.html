@@ -1,20 +1,29 @@
 <body>
-	<div ng-click="createList()" class = "btn btn-success" style="position:relative;margin:auto">
-  Add
+  <div class = "container-fluid container-fluid-spacious">
+    <div class = "row">
+      <div class = "col-lg-12 text-center">
+	      <div ng-click="createList()" class = "btn metric-btn">
+         Add Metric Set
+        </div>
+      </div>
+    </div>
   </div>
+
   <div ng-repeat="metric in metricList track by $index">
-    <h1 class = "btn btn-primary">Metric set {{$index + 1}}</h1>
+
     <div ng-init ="indexOfList = $index">
       <div class = "container-fluid container-fluid-spacious">
         <div ng-repeat="data in metric track by $index">
           <div class="col-lg-4">
             <div ng-if="$index < 3">
-
-              <h6 class="hr-divider-content hr-divider-heading">Graph</h6>
+              <div class="hr-divider m-t m-b-md">
+                <h6 class="hr-divider-content hr-divider-heading">Graph</h6>
             
+              </div>
+              
 
               <div class = "row">
-                <div class="col-lg-6" style="margin-left:5px; width:50%">
+                <div class="col-sm-8 col-sm-8 m-b" >
                   <form ng-submit="setName(data.metric,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
                       <input class="form-control"  ng-model="data.metric" type="text" placeholder="name" style="width:150%" >
@@ -22,47 +31,53 @@
                     </div>
                   </form>
                 </div>
-                <div class="col-lg-6" style=" margin-left:22px;width:40%">
-                  <div class ="form-inline navbar-form">
-                    <select class="form-control" style="width:135%" ng-model="graph" ng-change="switchGraph(graph,indexOfList,$index)">
+                <div class="col-sm-4 col-sm-4 m-b" >
+            
+                    <select class="form-control form-inline navbar-form"  ng-model="graph" ng-change="switchGraph(graph,indexOfList,$index)" style="margin-left:40px;width:80%">
                       <option ng-repeat="type in graphList" value="{{type}}">{{type}}</option>
                     </select>
-                  </div>
+              
                 </div>
  
               </div>
+              <div class = "row">
+              <div class = "col-lg-12 col-lg-12 m-b">
 		          <form ng-submit="queryDB(data.query,indexOfList,$index,'graph')" class="form-inline navbar-form">
                 <div class="input-with-icon">
                   <input class="form-control" style='width:275%' ng-model="data.query" type="text" placeholder="query">
                   <span class="icon icon-magnifying-glass"></span>
                 </div>
               </form>
+              </div>
+              </div>
             </div>
             <div ng-if="$index < 6 && $index >= 3">
 
-              <h3 class="hr-divider-content hr-divider-heading">Single Stats</h3>
-              
+
+              <div class="hr-divider m-t m-b-md">
+                <h6 class="hr-divider-content hr-divider-heading">Single Stat</h6>
+              </div>
               <div class = "row">
-                <div class="col-sm-4" style="margin-left:5px; width:30%">
+                <div class="col-sm-4 col-sm-4 m-b" >
                   <form ng-submit="setName(data.metric,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
-                      <input class="form-control" style='width:150%' ng-model="data.metric" type="text" placeholder="name">
+                      <input class="form-control" style='width:120%' ng-model="data.metric" type="text" placeholder="name">
                       <span class="icon icon-magnifying-glass"></span>
                     </div>
                   </form>
                 </div>
-                <div class="col-sm-4" style="margin-left:12px; width:30%">
+                <div class="col-sm-4 col-sm-4 m-b" >
                   <form ng-submit="setPreName(data.preStat,indexOfList,$index,'graph')" class="form-inline navbar-form">
                     <div class="input-with-icon">
-                      <input class="form-control" style='width:150%' ng-model="data.preStat" type="text" placeholder="prename">
+                      <input class="form-control" style='width:120%' ng-model="data.preStat" type="text" placeholder="prename">
                       <span class="icon icon-magnifying-glass"></span>
                     </div>
                   </form>
                 </div>
-                <div class="col-sm-4" style="margin-left:12px; width:30%">
+                <div class="col-sm-4 col-sm-4 m-b" >
                   <form ng-submit="setPostName(data.postStat,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
-                      <input class="form-control" style='width:150%' ng-model="data.postStat" type="text" placeholder="postname">
+                      <input class="form-control" style='width:120%' ng-model="data.postStat" type="text" placeholder="postname">
                       <span class="icon icon-magnifying-glass"></span>
                     </div>
                   </form>
@@ -70,7 +85,7 @@
               </div>
 
               <div class = "row">
-                <div class="col-sm-4" style="margin-left:5px; width:30%">
+                <div class="col-sm-3 col-sm-3 m-b" >
                   <form ng-submit="setMin(data.min,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
                       <input class="form-control" style='width:150%' ng-model="data.min" type="text" placeholder="min">
@@ -78,7 +93,7 @@
                     </div>
                   </form>
                 </div>
-                <div class="col-sm-4" style="margin-left:12px; width:30%">
+                <div class="col-sm-3 col-sm-3 m-b" >
                   <form ng-submit="setMax(data.max,indexOfList,$index,'graph')" class="form-inline navbar-form">
                     <div class="input-with-icon">
                       <input class="form-control" style='width:150%' ng-model="data.max" type="text" placeholder="max">
@@ -86,38 +101,43 @@
                     </div>
                   </form>
                 </div>
-                <div class="col-sm-4" style="margin-left:12px; width:30%">
-                  <div class ="form-inline navbar-form">
-                    <select class="form-control" style="width:150%" ng-model="choice" ng-change="setStat(choice,indexOfList,$index)">
+                <div class="col-sm-3 col-sm-3 m-b" >
+                
+                    <select class="form-control form-inline navbar-form" style="margin-left:15px;width:100%" ng-model="choice" ng-change="setStat(choice,indexOfList,$index)">
                       <option ng-repeat="type in statType" value="{{type}}">{{type}}</option>
                     </select>
-                  </div>
+             
+                </div>
+                <div class="col-sm-3 col-sm-3 m-b" >
+               
+                    <select class="form-control form-inline navbar-form" style="margin-left:8px;width:100%" ng-model="visual" ng-change="setVisual(visual,indexOfList,$index)">
+                      <option ng-repeat="type in statVisual" value="{{type}}">{{type}}</option>
+                    </select>
+               
                 </div>
               </div>
               <div class = "row">
-              <div class = "col-sm-8">
-              <form ng-submit="queryDB(data.query,indexOfList,$index,'stat')" class="form-inline navbar-form">
-                <div class="input-with-icon">
-                  <input class="form-control" style='width:275%' ng-model="data.query" type="text" placeholder="query">
-                  <span class="icon icon-magnifying-glass"></span>
+              
+              <div class = "col-sm-12 col-sm-12 m-b">
+              <form ng-submit="queryDB(data.query,indexOfList,$index,'stat')" class="form-inline navbar-form" >
+                <div class="input-with-icon" >
+                  <input class="form-control"  ng-model="data.query" type="text" placeholder="query" style="width:275%">
+                  <span class="icon icon-magnifying-glass" ></span>
                 </div>
               </form>
               </div>
-              <div class="col-sm-4" style="margin-left:62px; width:22%">
-                  <div class ="form-inline navbar-form">
-                    <select class="form-control" style="width:150%" ng-model="visual" ng-change="setVisual(visual,indexOfList,$index)">
-                      <option ng-repeat="type in statVisual" value="{{type}}">{{type}}</option>
-                    </select>
-                  </div>
-                </div>
+              
               </div>
             </div>
             <div ng-if="$index >= 6">
  
-                <h3 class="hr-divider-content hr-divider-heading">Large Graph</h3>
+              <div class="hr-divider m-t m-b-md">
+                <h6 class="hr-divider-content hr-divider-heading">LargeGraph</h6>
+            
+              </div>
          
             <div class = "row">
-                <div class="col-lg-6" style="margin-left:5px; width:50%">
+                <div class="col-lg-8 col-lg-8 m-b" >
                   <form ng-submit="setName(data.metric,indexOfList,$index)" class="form-inline navbar-form">
                     <div class="input-with-icon">
                       <input class="form-control"  ng-model="data.metric" type="text" placeholder="name" style="width:150%" >
@@ -125,21 +145,26 @@
                     </div>
                   </form>
                 </div>
-                <div class="col-lg-6" style=" margin-left:22px;width:40%">
-                  <div class ="form-inline navbar-form">
-                    <select class="form-control" style="width:135%" ng-model="graph" ng-change="switchGraph(graph,indexOfList,$index)">
+                <div class="col-lg-4 col-lg-4 m-b" >
+                  
+                    <select class="form-control form-inline navbar-form" style="margin-left:40px;width:80%" ng-model="graph" ng-change="switchGraph(graph,indexOfList,$index)">
                       <option ng-repeat="type in graphList" value="{{type}}">{{type}}</option>
                     </select>
-                  </div>
+                  
                 </div>
  
               </div>
+              <div class = "row">
+              
+              <div class = "col-sm-12 col-sm-12 m-b">
               <form ng-submit="queryDB(data.query,indexOfList,$index)" class="form-inline navbar-form">
                 <div class="input-with-icon">
                   <input class="form-control" style='width:275%' ng-model="data.query" type="text" placeholder="query">
                     <span class="icon icon-magnifying-glass"></span>
                 </div>
               </form>
+              </div>
+              </div>
             </div>
           </div>
         </div>

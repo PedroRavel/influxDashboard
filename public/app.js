@@ -2,7 +2,154 @@
 var app = angular.module('myApp',['ngRoute','chart.js'])
   .run(function($rootScope){
     //options for chart from chart.js. 
-    $rootScope.options = {
+
+    $rootScope.metricList = []
+    $rootScope.indexForGraph = 0;
+    $rootScope.indexForStat = 1
+    $rootScope.indexForLargeGraph = 2;
+
+    $rootScope.changeNumberColor = function(value, minValue, maxValue){
+      if(minValue){
+        if(value <= minValue){
+          return '#0B84C1';
+        }
+      }
+
+      if(maxValue){
+        if(value >= maxValue){
+          return '#8E0F0F';
+        }
+      }
+    }
+
+    //extra options for charts. setting background-color to transparent allows area below the graph to not be drawn
+    $rootScope.dataSetOverride = [{
+      //backgroundColor:"transparent",
+      pointHoverRadius: 8,
+      bezierCurve: false
+    }]
+})
+
+
+//sets template and controllers based on route
+app.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider) {
+  $routeProvider
+    .when('/options',
+      {
+        templateUrl: "form.html",
+        controller:"formCtrl"
+      })
+    .when('/',
+      {
+        templateUrl: "dashboard.html",
+        controller:"dashboardCtrl"
+      })
+}]);
+
+
+app.factory('formFactory',function($http){
+
+  var formFactory = {};
+
+  var grabIndex = function(listIndex,metricIndex){
+    return {
+      listIndex:listIndex,
+      metricIndex:metricIndex
+    }
+  }
+
+  formFactory.getMetrics = function(){
+    return $http.get('/metric/list')
+  }
+
+  formFactory.setVisual = function(visual,listIndex,metricIndex){
+    var data = grabIndex(listIndex,metricIndex);
+    data.visual = visual;
+    return $http.post('/metric/setstatvisual',data)
+  }
+
+  formFactory.setStat = function(statChoice, listIndex,metricIndex){
+    var data = grabIndex(listIndex,metricIndex);
+    data.choice = statChoice;
+    return $http.post('/metric/setstat',data)
+  }
+
+  formFactory.switchGraph = function(graph,listIndex,metricIndex) {
+    var data = grabIndex(listIndex,metricIndex);
+    data.graphType = graph;
+    return $http.post('/metric/setgraph',data)
+  }
+
+  
+  formFactory.createList = function(index){    
+      var data = {
+        index:index
+      }
+      return $http.post('/metric/add',data)
+  }
+
+  formFactory.setMin = function(min,listIndex,metricIndex){
+    var data = grabIndex(listIndex,metricIndex);
+    data.min = min;
+    return $http.post('/metric/setmin',data)
+  }
+
+  formFactory.setMax = function(max,listIndex,metricIndex){
+    var data = grabIndex(listIndex,metricIndex);
+    data.max = max;
+    return $http.post('/metric/setmax',data)
+  }
+  
+  formFactory.setName = function(name, listIndex,metricIndex){
+    var data = grabIndex(listIndex,metricIndex);
+    data.name = name;
+    return $http.post('/metric/setname',data)
+  }
+
+  formFactory.setPreName = function(preName, listIndex,metricIndex){
+    var data = grabIndex(listIndex,metricIndex);
+    data.preName = preName;
+    return $http.post('/metric/setprename',data);
+  }
+
+  formFactory.setPostName = function(postName, listIndex,metricIndex){
+    var data = grabIndex(listIndex,metricIndex);
+    data.postName = postName;
+    return $http.post('/metric/setpostname',data)
+  }
+
+  formFactory.queryDB = function(query, listIndex, metricIndex, typeOfMetric){
+    var data = grabIndex(listIndex,metricIndex);
+    data.query = query;
+    data.typeOfMetric = typeOfMetric; 
+    return $http.post('/metric/process',data)
+  }
+
+  return formFactory;
+
+})
+
+app.controller('indexCtrl', function($scope,$http){
+  $scope.authenticateDB = function(host,username,password,database){
+    var data = {
+      host: host,
+      username: username,
+      password: password,
+      database:database
+    }
+    $http.post('/metric/client',data).then(function(res){
+        console.log(res.data)
+    })
+  }
+})
+
+app.controller('dashboardCtrl', function($scope,$rootScope,$http){
+
+    $http.get('/metric/list').then(function(res){
+      $rootScope.metricList = res.data;
+    })
+  
+    $scope.options = {
 
       animation: {
         duration: 0.0
@@ -34,7 +181,7 @@ var app = angular.module('myApp',['ngRoute','chart.js'])
       }
     };
 
-    $rootScope.pieOptions = {
+    $scope.pieOptions = {
 
       animation: {
         duration: 0.0
@@ -66,7 +213,7 @@ var app = angular.module('myApp',['ngRoute','chart.js'])
       }
     };
 
-    $rootScope.statOptions = {
+    $scope.statOptions = {
 
       animation: {
         duration: 0.0
@@ -98,7 +245,7 @@ var app = angular.module('myApp',['ngRoute','chart.js'])
       }
     };
 
-    $rootScope.dummyOptions = {
+    $scope.dummyOptions = {
 
       animation: {
         duration: 1
@@ -129,182 +276,82 @@ var app = angular.module('myApp',['ngRoute','chart.js'])
         enabled: false
       }
     };
-    
-    $rootScope.changeNumberColor = function(value, minValue, maxValue){
-      if(minValue){
-        if(value <= minValue){
-          return '#0B84C1';
-        }
-      }
-
-      if(maxValue){
-        if(value >= maxValue){
-          return '#8E0F0F';
-        }
-      }
-    }
-
-    //extra options for charts. setting background-color to transparent allows area below the graph to not be drawn
-    $rootScope.dataSetOverride = [{
-      //backgroundColor:"transparent",
-      pointHoverRadius: 8,
-      bezierCurve: false
-    }]
   })
 
-//sets template and controllers based on route
-app.config(['$routeProvider','$locationProvider',function($routeProvider,$locationProvider) {
-  $routeProvider
-    .when('/options',
-      {
-        templateUrl: "form.html",
-        controller:"ctrl"
-      })
-    .when('/',
-      {
-        templateUrl: "dashboard.html",
-        controller:"ctrl"
-      })
-    .when('/metric/find/:index',
-    {
-      templateUrl:"kpi.html",
-      controller: "kpi"
-    });
-}]);
-
-
-app.controller('kpi', function($scope,$http,$routeParams){
-  $http.get('/metric/find/' + $routeParams.index).then(function(res){
-    $scope.kpi = res.data; 
-  })
-})
-
-
-app.controller('ctrl', function($scope,$http,$timeout){
+app.controller('formCtrl', function($scope,$http,$rootScope,formFactory){
   
-  $scope.graphList = ['line','bar','radar','horizontalBar'];
-  $scope.statType = ['max','min','average','sum','latest']
+  $scope.graphList  = ['line','bar','radar','horizontalBar'];
+  $scope.statType   = ['max','min','average','sum','latest']
   $scope.statVisual = ['stat','pie','doughnut']
 
-  $scope.metricList = []
+  var formFactory = formFactory;
 
-  $http.get('/metric/list').then(function(res){
-    $scope.metricList = res.data;
+  formFactory.getMetrics().then(function(res){
+    $rootScope.metricList = res.data;
   })
 
   $scope.setVisual = function(visual,listIndex,metricIndex){
-    var data = {
-      visual:visual,
-      listIndex:listIndex,
-      metricIndex:metricIndex
-
-    }
-    
-    $http.post('/metric/setstatvisual',data).then(function(res){
+    formFactory.setVisual(visual,listIndex,metricIndex).then(function(res){
       $scope.metricList = res.data;
-    })    
-
+    })
   }
 
-
-
   $scope.setStat = function(statChoice, listIndex,metricIndex){
-  
-    var data = {
-      choice:statChoice,
-      listIndex:listIndex,
-      metricIndex:metricIndex
-      
-    }
-
-    $http.post('/metric/setstat',data).then(function(res){
+    formFactory.setStat(statChoice, listIndex,metricIndex).then(function(res){
       $scope.metricList = res.data;
     })
   }
 
   $scope.switchGraph = function(graph,listIndex,metricIndex) {
-    var data = {
-      graphType:graph,
-      listIndex:listIndex,
-      metricIndex:metricIndex
-    }
-    $http.post('/metric/setgraph',data).then(function(res){
+    formFactory.switchGraph(graph,listIndex,metricIndex).then(function(res){
 
     });
   }
 
-  
-  $scope.createList = function(){    
-      $http.get('/metric/add').then(function(res){
+  $scope.createList = function(index){    
+    formFactory.createList(index).then(function(res){
       $scope.metricList = res.data
     })
   }
 
   $scope.setMin = function(min,listIndex,metricIndex){
-    var data =  {
-      min:min,
-      listIndex:listIndex,
-      metricIndex:metricIndex
-    }
-    $http.post('/metric/setmin',data).then(function(res){
+    formFactory.setMin(min,listIndex,metricIndex).then(function(res){
 
-    });
+    })
   }
 
   $scope.setMax = function(max,listIndex,metricIndex){
-    var data =  {
-      max:max,
-      listIndex:listIndex,
-      metricIndex:metricIndex
-    }
-    $http.post('/metric/setmax',data).then(function(res){
+    formFactory.setMax(max,listIndex,metricIndex).then(function(res){
 
-    });
+    })
   }
   
   $scope.setName = function(name, listIndex,metricIndex){
-    var data =  {
-        name:name,
-        listIndex:listIndex,
-        metricIndex:metricIndex
-    }
-    $http.post('/metric/setname',data).then(function(res){
+    formFactory.setName(name, listIndex,metricIndex).then(function(res){
 
-    });
+    })
   }
 
   $scope.setPreName = function(preName, listIndex,metricIndex){
-    var data =  {
-        preName:preName,
-        listIndex:listIndex,
-        metricIndex:metricIndex
-    }
-    $http.post('/metric/setprename',data).then(function(res){});
+    formFactory.setPreName(preName, listIndex,metricIndex).then(function(res){
+
+    })
   }
 
   $scope.setPostName = function(postName, listIndex,metricIndex){
-    var data =  {
-        postName:postName,
-        listIndex:listIndex,
-        metricIndex:metricIndex
-    }
-    $http.post('/metric/setpostname',data).then(function(res){});
+    formFactory.setPostName(postName, listIndex,metricIndex).then(function(res){
+
+    })
   }
 
   $scope.queryDB = function(query, listIndex, metricIndex, typeOfMetric){
-    var data = { 
-        query:query,
-        listIndex:listIndex,
-        metricIndex: metricIndex,
-        typeOfMetric:typeOfMetric
-      }
-    
-    $http.post('/metric/process',data).then(function(res){
+    formFactory.queryDB(query, listIndex, metricIndex, typeOfMetric).then(function(res){
       if(res.data.error){
         alert("Incorrect query syntax. Please check spelling");
       } else {
-      $scope.metricList = res.data;
-    }
+        $scope.metricList = res.data;
+      }
     })
   }
+
 })

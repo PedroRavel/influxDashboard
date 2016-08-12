@@ -7,13 +7,12 @@ var http = require('http').Server(app);
 
 var PORT = process.env.PORT || 3000;
 
-//set two directories for ease of use
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
-app.get('/metric/add', function(req,res){
+app.post('/metric/add', function(req,res){
   metrics.appendMetricToList(req,res);
 })
 
@@ -23,6 +22,10 @@ app.get('/metric/find/:index', function(req,res){
 
 app.get('/metric/list',function(req,res){
 	metrics.getMetricList(req,res);
+})
+
+app.post('/metric/client', function(req,res){
+  metrics.setClient(req,res);
 })
 
 app.post('/metric/setstat',function(req,res){

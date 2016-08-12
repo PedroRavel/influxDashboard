@@ -1,3 +1,4 @@
+//variables for modules and imports
 var express = require('express');
 var bodyParser = require('body-parser');
 var metrics = require('./controller/influxController')
@@ -7,11 +8,14 @@ var http = require('http').Server(app);
 
 var PORT = process.env.PORT || 3000;
 
+//sets primary directories
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname));
+//body parser for parsing json
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
+//post and get request see influcController for functionality
 app.post('/metric/add', function(req,res){
   metrics.appendMetricToList(req,res);
 })

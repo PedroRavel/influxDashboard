@@ -1,12 +1,14 @@
 
 var app = angular.module('myApp',['ngRoute','chart.js'])
   .run(function($rootScope){
-    //options for chart from chart.js. 
-
+    
+    //variables to store metric list and index into list for metric types 
     $rootScope.metricList = []
     $rootScope.indexForGraph = 0;
     $rootScope.indexForStat = 1
     $rootScope.indexForLargeGraph = 2;
+
+    //function to change color of single stat based on min and max values;
 
     $rootScope.changeNumberColor = function(value, minValue, maxValue){
       if(minValue){
@@ -46,7 +48,7 @@ app.config(['$routeProvider','$locationProvider',function($routeProvider,$locati
       })
 }]);
 
-
+//factory for get and post requests. allows better readability
 app.factory('formFactory',function($http){
 
   var formFactory = {};
@@ -129,7 +131,9 @@ app.factory('formFactory',function($http){
 
 })
 
+//controller for logging in to host and database
 app.controller('indexCtrl', function($scope,$http){
+  //function to sign in to influx client
   $scope.authenticateDB = function(host,username,password,database){
     var data = {
       host: host,
@@ -143,12 +147,14 @@ app.controller('indexCtrl', function($scope,$http){
   }
 })
 
+//controller for dashboard and metrics visualization
 app.controller('dashboardCtrl', function($scope,$rootScope,$http){
 
+    //get request to retrieve list on route change
     $http.get('/metric/list').then(function(res){
       $rootScope.metricList = res.data;
     })
-  
+    //options for line graphs
     $scope.options = {
 
       animation: {
@@ -180,7 +186,7 @@ app.controller('dashboardCtrl', function($scope,$rootScope,$http){
         enabled: true
       }
     };
-
+    //options for pie graphs
     $scope.pieOptions = {
 
       animation: {
@@ -212,7 +218,7 @@ app.controller('dashboardCtrl', function($scope,$rootScope,$http){
         enabled: true
       }
     };
-
+    //options for spark line under single stat
     $scope.statOptions = {
 
       animation: {
@@ -245,6 +251,7 @@ app.controller('dashboardCtrl', function($scope,$rootScope,$http){
       }
     };
 
+    //dummy options of graph not available
     $scope.dummyOptions = {
 
       animation: {
@@ -278,72 +285,83 @@ app.controller('dashboardCtrl', function($scope,$rootScope,$http){
     };
   })
 
+//controller for form 
 app.controller('formCtrl', function($scope,$http,$rootScope,formFactory){
-  
+  //arrays for dropdown list
   $scope.graphList  = ['line','bar','radar','horizontalBar'];
   $scope.statType   = ['max','min','average','sum','latest']
   $scope.statVisual = ['stat','pie','doughnut']
 
+  //variable for formfactory
   var formFactory = formFactory;
 
+  //retrieve metrics on route change
   formFactory.getMetrics().then(function(res){
     $rootScope.metricList = res.data;
   })
 
+  //function to set visual between stat pie and doughnut
   $scope.setVisual = function(visual,listIndex,metricIndex){
     formFactory.setVisual(visual,listIndex,metricIndex).then(function(res){
       $scope.metricList = res.data;
     })
   }
 
+  //set stat type depending on choice
   $scope.setStat = function(statChoice, listIndex,metricIndex){
     formFactory.setStat(statChoice, listIndex,metricIndex).then(function(res){
       $scope.metricList = res.data;
     })
   }
 
+  //switches graph type
   $scope.switchGraph = function(graph,listIndex,metricIndex) {
     formFactory.switchGraph(graph,listIndex,metricIndex).then(function(res){
 
     });
   }
 
+  //creates new metric
   $scope.createList = function(index){    
     formFactory.createList(index).then(function(res){
       $scope.metricList = res.data
     })
   }
 
+  //sets min threshold for single stat
   $scope.setMin = function(min,listIndex,metricIndex){
     formFactory.setMin(min,listIndex,metricIndex).then(function(res){
 
     })
   }
-
+  //sets max threshold for single stat
   $scope.setMax = function(max,listIndex,metricIndex){
     formFactory.setMax(max,listIndex,metricIndex).then(function(res){
 
     })
   }
   
+  //sets name for metric
   $scope.setName = function(name, listIndex,metricIndex){
     formFactory.setName(name, listIndex,metricIndex).then(function(res){
 
     })
   }
 
+  //sets prename to appear to the left of single stats
   $scope.setPreName = function(preName, listIndex,metricIndex){
     formFactory.setPreName(preName, listIndex,metricIndex).then(function(res){
 
     })
   }
-
+  //sets postname to appear to the left of single stats
   $scope.setPostName = function(postName, listIndex,metricIndex){
     formFactory.setPostName(postName, listIndex,metricIndex).then(function(res){
 
     })
   }
 
+  //queries database and returns parsed data
   $scope.queryDB = function(query, listIndex, metricIndex, typeOfMetric){
     formFactory.queryDB(query, listIndex, metricIndex, typeOfMetric).then(function(res){
       if(res.data.error){
